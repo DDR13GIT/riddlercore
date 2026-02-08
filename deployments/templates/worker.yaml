@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-worker
+  labels:
+    {{- include "riddlercore-worker.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas.worker }}
+  selector:
+    matchLabels:
+      {{- include "riddlercore-worker.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "riddlercore-worker.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: ADSPACE_CONSUL_URL
+            value: {{.Values.consul.url}}
+          - name: ADSPACE_CONSUL_PATH
+            value: {{.Values.consul.path}}
+          args: ["worker","1"]

@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  annotations:
+    service.pathao.com/owner: {{.Values.riddlercore.owner}}
+    service.pathao.com/team: {{.Values.riddlercore.team}}
+    {{- include "riddlercore.svcAnnotations" . | nindent 4 }}
+  name: {{ include "riddlercore.name" . }}
+  labels:
+  {{- include "riddlercore.labels" . | nindent 4 }}
+spec:
+  type: {{.Values.service.type}}
+  ports:
+    - name: {{ include "riddlercore.name" . }}-svc
+      port: {{.Values.service.port}}
+      targetPort: {{ include "riddlercore.name" . }}
+  selector:
+    {{- include "riddlercore.selectorLabels" . | nindent 4 }}

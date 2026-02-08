@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "riddlercore.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas.riddlercore }}
+  selector:
+    matchLabels:
+      {{- include "riddlercore.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "riddlercore.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ADSPACE_CONSUL_URL
+              value: {{.Values.consul.url}}
+            - name: ADSPACE_CONSUL_PATH
+              value: {{.Values.consul.path}}
+            - name: CONSUL_TOKEN
+              value: {{.Values.consul.token}}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          args: ["serve"]
+          ports:
+            - containerPort: {{.Values.riddlercore.port}}
+              name: {{ include "riddlercore.name" . }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: "/"
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 5
+
+---

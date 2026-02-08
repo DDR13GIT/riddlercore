@@ -1,0 +1,35 @@
+# Default values for riddlercore .
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+riddlercore:
+  team: "Platform Core"
+  owner: "saddam@pathao.com"
+  type: ClusterIP
+  port: 80
+
+replicas:
+  riddlercore: 1
+  worker: 1
+
+image:
+  repository: harbor.pathaointernal.com/platform/riddlercore
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: regsecret
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 80
+
+consul:
+  url: consul.consul:8500
+  path: platform/riddlercore
+  token: "6123d044-5e79-ea9a-0f72-c3861dad0384"
+
+serviceProd:
+  hubble: true
+  prometheusPort: 80

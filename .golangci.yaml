@@ -1,0 +1,47 @@
+version: "2"
+
+linters:
+  default: all
+
+  disable:
+    - dupl
+    - gocognit
+    - gochecknoinits
+    - durationcheck
+    - gocyclo
+    - ireturn
+    - gosec
+    - nestif
+    - cyclop
+    - varnamelen
+    - nlreturn
+    - gochecknoglobals
+    - gocritic
+    - maintidx
+    - exhaustruct
+    - tagliatelle
+    - depguard
+    - wsl
+    - wrapcheck
+    - revive
+    - noinlineerr
+
+  settings:
+    gocritic:
+      disable-all: true
+
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
+
+formatters:
+  # Enable specific formatter.
+  # Default: [] (uses standard Go formatting)
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+    - golines
+
